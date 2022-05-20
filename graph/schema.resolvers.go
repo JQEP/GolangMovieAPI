@@ -5,31 +5,36 @@ package graph
 
 import (
 	"context"
+	"fmt"
 	"go-graphql-mongodb-api/database"
 	"go-graphql-mongodb-api/graph/generated"
 	"go-graphql-mongodb-api/graph/model"
 )
 
-func (r *mutationResolver) CreateMovie(ctx context.Context, input model.NewMovie) (*model.Movie, error) {
-	return db.InsertMovieByID(input), nil
+func (r *myMutationResolver) CreateTodo(ctx context.Context, todo model.TodoInput) (*model.Todo, error) {
+	panic(fmt.Errorf("not implemented"))
 }
 
-func (r *queryResolver) Movie(ctx context.Context, id string) (*model.Movie, error) {
-	return db.FindMovieById(id), nil
+func (r *myMutationResolver) UpdateTodo(ctx context.Context, id string, updatedTodo model.TodoInput) (*model.Todo, error) {
+	panic(fmt.Errorf("not implemented"))
 }
 
-func (r *queryResolver) Movies(ctx context.Context) ([]*model.Movie, error) {
-	return db.All(), nil
+func (r *myQueryResolver) Todo(ctx context.Context, id string) (*model.Todo, error) {
+	panic(fmt.Errorf("not implemented"))
 }
 
-// Mutation returns generated.MutationResolver implementation.
-func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResolver{r} }
+func (r *myQueryResolver) Todos(ctx context.Context) ([]*model.Todo, error) {
+	panic(fmt.Errorf("not implemented"))
+}
 
-// Query returns generated.QueryResolver implementation.
-func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
+// MyMutation returns generated.MyMutationResolver implementation.
+func (r *Resolver) MyMutation() generated.MyMutationResolver { return &myMutationResolver{r} }
 
-type mutationResolver struct{ *Resolver }
-type queryResolver struct{ *Resolver }
+// MyQuery returns generated.MyQueryResolver implementation.
+func (r *Resolver) MyQuery() generated.MyQueryResolver { return &myQueryResolver{r} }
+
+type myMutationResolver struct{ *Resolver }
+type myQueryResolver struct{ *Resolver }
 
 // !!! WARNING !!!
 // The code below was going to be deleted when updating resolvers. It has been copied here so you have
@@ -37,4 +42,31 @@ type queryResolver struct{ *Resolver }
 //  - When renaming or deleting a resolver the old code will be put in here. You can safely delete
 //    it when you're done.
 //  - You have helper methods in this file. Move them out to keep these resolver files clean.
+func (r *mutationResolver) CreateCourse(ctx context.Context, input model.NewCourse) (*model.Course, error) {
+	return db.InsertCourseByID(input), nil
+}
+func (r *mutationResolver) CreateInstructor(ctx context.Context, input *model.AddInstructor) (*model.Instructor, error) {
+	return db.InsertInstructor(input), nil
+}
+func (r *mutationResolver) UpdateCourse(ctx context.Context, courseID string, name *string, subject *string, instructorID string) (*model.Course, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+func (r *mutationResolver) DeleteCourse(ctx context.Context, courseID string) (*model.Course, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+func (r *queryResolver) Course(ctx context.Context, id string) (*model.Course, error) {
+	return db.FindCourseById(id), nil
+}
+func (r *queryResolver) Courses(ctx context.Context) ([]*model.Course, error) {
+	return db.All(), nil
+}
+func (r *queryResolver) Instructor(ctx context.Context, id string) (*model.Instructor, error) {
+	return db.FindInstructorById(id), nil
+}
+func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResolver{r} }
+func (r *Resolver) Query() generated.QueryResolver       { return &queryResolver{r} }
+
+type mutationResolver struct{ *Resolver }
+type queryResolver struct{ *Resolver }
+
 var db = database.Connect("mongodb://localhost:27017/")
